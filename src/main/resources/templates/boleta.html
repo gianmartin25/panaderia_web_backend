@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"></meta>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
+    <title>Boleta de Venta Electrónica</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            margin: 0;
+            padding: 0;
+        }
+
+        .company-information {
+            display: inline-block;
+            width: 250px;
+            margin: 0 20px;
+        }
+
+        .company-detail {
+            display: inline-block;
+            border: 2px solid #000;
+            width: 150px;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .boleta {
+            margin: 0 auto;
+            border: 1px solid #000;
+            padding: 15px;
+        }
+
+        .header {
+            /*display: flex;*/
+            /*flex-direction: row;*/
+            /*justify-content: space-between;*/
+        }
+
+        .logo-container {
+            display: inline-block;
+            width: 150px;
+            margin-right: 10px;
+        }
+
+        .logo {
+            width: 100%;
+        }
+
+        .company-info {
+            display: inline-block;
+            width: 48%;
+            margin-right: 48px;
+            /*padding: 0.5rem 1rem;*/
+            /*border: 2px solid #000;*/
+        }
+
+        .payment-info {
+            display: inline-block;
+            width: 30%;
+            margin: 0;
+        }
+
+        .section {
+            /*margin-top: 20px;*/
+            /*padding: 0;*/
+        }
+
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #000;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: center;
+        }
+
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .qr {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+
+    </style>
+</head>
+<body>
+<div class="boleta">
+    <!-- Header -->
+    <div class="header">
+        <div>
+            <div class="logo-container">
+                <img class="logo" th:src="@{src/main/resources/static/images/logo_black.jpg}" alt="logo"></img>
+            </div>
+            <div class="company-information">
+                <p><strong th:text="${razonSocialFiscal}"></strong></p>
+                <p th:text="${direccionFiscal}"></p>
+                <p>LIMA - LIMA - Los Olivos</p>
+<!--                <p><strong>SUCURSAL:</strong></p>-->
+            </div>
+            <div class="company-detail">
+                <h2>BOLETA DE VENTA ELECTRÓNICA</h2>
+                <p><strong>RUC:</strong> <span th:text="${RUCFiscal}"></span></p>
+                <p><strong th:text="${numeroComprobante}"></strong></p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Customer Info -->
+    <div class="section">
+        <div class="company-info">
+            <p><strong>SEÑOR(ES):</strong> <span th:text="${nombreCompleto}"></span></p>
+            <p><strong>DIRECCIÓN:</strong> <span th:text="${direccion}"></span></p>
+            <p><strong>DNI:</strong> <span th:text="${dni}"></span></p>
+        </div>
+        <div class="payment-info">
+            <p><strong>FECHA DE EMISIÓN:</strong> <span th:text="${fechaEmision}"></span></p>
+            <p><strong>MONEDA:</strong> <span th:text="${moneda}"></span></p>
+        </div>
+    </div>
+    <!-- Table -->
+    <table>
+        <thead>
+        <tr>
+            <th>CANTIDAD</th>
+            <th>DESCRIPCIÓN</th>
+            <th>PRECIO UNITARIO</th>
+            <th>DESCUENTO</th>
+            <th>IMPORTE</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="producto : ${productos}">
+            <td th:text="${producto.cantidad}"></td>
+            <td th:text="${producto.descripcion}"></td>
+            <td th:text="${producto.precioUnitario}"></td>
+            <td th:text="${producto.descuento}"></td>
+            <td th:text="${producto.importe}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>Representación Impresa de la Boleta de Venta Electrónica</p>
+        <p><strong th:text="${montoTotal}"></strong></p>
+    </div>
+
+    <div class="section">
+        <p><strong>Total Valor de Venta - Operaciones Inafectas:</strong> <span th:text="${montoSubtotal}"></span></p>
+        <!--        <p><strong>IGV:</strong> <span th:text="${igv}"></span></p>-->
+        <p><strong>Importe Total:</strong> <span th:text="${montoTotal}"></span></p>
+    </div>
+</div>
+</body>
+</html>
