@@ -2,6 +2,7 @@ package com.gian.springboot.app.panaderia.panaderiabackend.services;
 
 import com.gian.springboot.app.panaderia.panaderiabackend.dtos.RegistroUsuarioEmpresaDTO;
 import com.gian.springboot.app.panaderia.panaderiabackend.dtos.RegistroUsuarioPersonaDTO;
+import com.gian.springboot.app.panaderia.panaderiabackend.exceptions.UsuarioExistenteException;
 import com.gian.springboot.app.panaderia.panaderiabackend.models.*;
 import com.gian.springboot.app.panaderia.panaderiabackend.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +22,6 @@ public class UsuarioEmpresaService {
     @Autowired
     private EmpresaRepository empresaRepository;
 
-//    @Autowired
-//    private EmpresaRepository empresaRepository;
 
     @Autowired
     PasswordEncryptionService passwordEncryptionService;
@@ -32,11 +31,22 @@ public class UsuarioEmpresaService {
     private DocumentoRepository documentoRepository;
     @Autowired
     private TipoClienteRepository tipoClienteRepository;
+    @Autowired
+    private PersonaRepository personaRepository;
+    @Autowired
+    private EmpleadoRepository empleadoRepository;
+    @Autowired
+    private TransportistaRepository transportistaRepository;
 
     public Usuario crearUsuarioEmpresa(RegistroUsuarioEmpresaDTO registroUsuarioEmpresaDTO) {
         Empresa empresa = new Empresa();
         empresa.setRazonSocial(registroUsuarioEmpresaDTO.getRazonSocial());
         empresa.setEliminado(false);
+
+        Usuario existeUsuario = usuarioRepository.findByEmailOrUsername(registroUsuarioEmpresaDTO.getEmail(), registroUsuarioEmpresaDTO.getUsername());
+        if (existeUsuario != null) {
+            throw new UsuarioExistenteException("El usuario ya existe");
+        }
 
         Documento documento = new Documento();
 
@@ -63,12 +73,15 @@ public class UsuarioEmpresaService {
         return usuarioRepository.save(usuario);
     }
 
-    @Transactional
     public Usuario crearUsuarioPersona(RegistroUsuarioPersonaDTO registroUsuarioPersonaDTO) {
         Documento documento = new Documento();
         tipoDocumentoRepository.findById(1L).ifPresent(documento::setTipoDocumento);
         documento.setNumero(registroUsuarioPersonaDTO.getNumeroDocumento());
 
+        Usuario existeUsuario = usuarioRepository.findByEmailOrUsername(registroUsuarioPersonaDTO.getEmail(), registroUsuarioPersonaDTO.getUsername());
+        if (existeUsuario != null) {
+            throw new UsuarioExistenteException("El usuario ya existe");
+        }
         Persona persona = new Persona();
         persona.setApellidos(registroUsuarioPersonaDTO.getApellidos());
         persona.setFechaNacimiento(registroUsuarioPersonaDTO.getFechaNacimiento());
@@ -92,5 +105,15 @@ public class UsuarioEmpresaService {
 
 
         return usuarioRepository.save(usuario);
+    }
+
+    public boolean eliminarUsuarios(){
+        transportistaRepository.deleteAll();
+        empleadoRepository.deleteAll();
+        personaRepository.deleteAll();
+        empresaRepository.deleteAll();
+        clienteRepository.deleteAll();
+        usuarioRepository.deleteAll();
+        return true;
     }
 }

@@ -6,6 +6,16 @@ public class UsuarioResponseDTO {
     private String email;
     private String tipoUsuario;
 
+    public String getTipoCliente() {
+        return tipoCliente;
+    }
+
+    public void setTipoCliente(String tipoCliente) {
+        this.tipoCliente = tipoCliente;
+    }
+
+    private  String tipoCliente;
+
 
 
     public String getEmail() {

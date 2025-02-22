@@ -2,6 +2,7 @@ package com.gian.springboot.app.panaderia.panaderiabackend.services;
 
 import com.gian.springboot.app.panaderia.panaderiabackend.dtos.EmpleadoDto;
 import com.gian.springboot.app.panaderia.panaderiabackend.dtos.RegistroEmpleadoDTO;
+import com.gian.springboot.app.panaderia.panaderiabackend.models.CargoEmpleado;
 import com.gian.springboot.app.panaderia.panaderiabackend.models.Documento;
 import com.gian.springboot.app.panaderia.panaderiabackend.models.Empleado;
 import com.gian.springboot.app.panaderia.panaderiabackend.models.Persona;
@@ -54,9 +55,14 @@ public class EmpleadoService {
         persona.setDocumento(documento);
         personaRepository.save(persona);
 
+        CargoEmpleado cargoEmpleado = cargoEmpleadoService.obtenerCargoEmpleado(registroEmpleadoDto.getIdCargoEmpleado());
+
+        if (cargoEmpleado == null) {
+            throw new IllegalArgumentException("El cargo del empleado no existe");
+        }
         // Crear y asignar el empleado
         Empleado empleado = new Empleado();
-        empleado.setIdCargoEmpleado(registroEmpleadoDto.getIdCargoEmpleado());
+        empleado.setCargoEmpleado(cargoEmpleado);
         empleado.setFechaContratacion(registroEmpleadoDto.getFechaContratacion());
         empleado.setNombres(registroEmpleadoDto.getNombres());
         empleado.setPersona(persona);
@@ -72,9 +78,9 @@ public class EmpleadoService {
         empleadoDto.setApellidos(empleadoGuardado.getPersonaApellidos());
         empleadoDto.setPersonaId(empleadoGuardado.getPersonaId());
         empleadoDto.setFechaContratacion(empleadoGuardado.getFechaContratacion());
-        empleadoDto.setIdCargoEmpleado(empleadoGuardado.getIdCargoEmpleado());
+        empleadoDto.setIdCargoEmpleado(empleadoGuardado.getCargoEmpleado().getId());
         empleadoDto.setFechaNacimiento(empleadoGuardado.getPersonaFechaNacimiento());
-        empleadoDto.setCargoEmpleado(cargoEmpleadoService.obtenerCargoEmpleado(empleadoGuardado.getIdCargoEmpleado()).getNombre());
+        empleadoDto.setCargoEmpleado(empleadoGuardado.getCargoEmpleado().getNombre());
         Documento documentoGuardado = documentoRepository.findDocumentoById(empleadoGuardado.getPersonaId());
         if (documentoGuardado != null) {
             empleadoDto.setTipoDocumento(documentoGuardado.getTipoDocumento().getNombre());
@@ -105,9 +111,9 @@ public class EmpleadoService {
             empleadoDTO.setPersonaId(empleado.getPersonaId());
             empleadoDTO.setFechaContratacion(empleado.getFechaContratacion());
             empleadoDTO.setEliminado(empleado.getEliminado());
-            empleadoDTO.setIdCargoEmpleado(empleado.getIdCargoEmpleado());
+            empleadoDTO.setIdCargoEmpleado(empleado.getCargoEmpleado().getId());
             empleadoDTO.setFechaNacimiento(empleado.getPersonaFechaNacimiento());
-            empleadoDTO.setCargoEmpleado(cargoEmpleadoService.obtenerCargoEmpleado(empleado.getIdCargoEmpleado()).getNombre());
+            empleadoDTO.setCargoEmpleado(cargoEmpleadoService.obtenerCargoEmpleado(empleado.getCargoEmpleado().getId()).getNombre());
 
             // Obtener documentos asociados a la persona del empleado
             Documento documento = documentoRepository.findDocumentoById(empleado.getPersonaId());

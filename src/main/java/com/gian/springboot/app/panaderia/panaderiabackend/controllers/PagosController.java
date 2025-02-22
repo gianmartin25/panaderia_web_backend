@@ -109,28 +109,6 @@ public class PagosController {
             // Verifica la firma del webhook
             Event event = Webhook.constructEvent(payload, sigHeader, STRIPE_WEBHOOK_SECRET);
 
-//            // Maneja el evento charge.succeeded
-//            if ("charge.succeeded".equals(event.getType())) {
-//                EventDataObjectDeserializer deserializer = event.getDataObjectDeserializer();
-//                //deserializar el payload y extraer el orden_id de la metadata
-//                JsonObject payloadObject = JsonParser.parseString(payload).getAsJsonObject();
-//                JsonObject dataObject = payloadObject.getAsJsonObject().get("data").getAsJsonObject().get("object").getAsJsonObject();
-//                JsonObject orderId = dataObject.get("metadata").getAsJsonObject();
-//
-//                if (deserializer.getObject().isPresent()) {
-//                    Charge charge = (Charge) deserializer.getObject().get();
-//                    if (charge != null) {
-//                        System.out.println("Charge ID: " + charge.getId());
-//                        System.out.println("Charge Status: " + charge.getStatus());
-//                        System.out.println("Metadata orden_id: " + charge.getMetadata().get("orden_id"));
-//                    }
-//
-//                } else {
-//                    // Deserialización fallida
-//                    System.out.println("Error deserializando objeto Charge");
-//                }
-//
-//            }
 
             if ("checkout.session.completed".equals(event.getType())) {
                 EventDataObjectDeserializer deserializer = event.getDataObjectDeserializer();
@@ -167,19 +145,6 @@ public class PagosController {
 
                 ComprobantePago comprobantePago = comprobanteDePagoService.guardar(comprobantePagoDTO);
 
-
-//                if (deserializer.getObject().isPresent()) {
-//                    Session session = (Session) deserializer.getObject().get();
-//                    if (session != null) {
-//                        System.out.println("Session ID: " + session.getId());
-//                        System.out.println("Session Status: " + session.getPaymentStatus());
-//                        System.out.println("Metadata     orden_id: " + session.getMetadata().get("orden_id"));
-//                    }
-//
-//                } else {
-//                    // Deserialización fallida
-//                    System.out.println("Error deserializando objeto Charge");
-//                }
             }
 
             return event;

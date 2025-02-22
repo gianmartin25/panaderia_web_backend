@@ -125,7 +125,7 @@ public class OrdenService {
         Empleado empleado = empleadoRepository.findById(1L).get();
         orden.setEmpleado(empleado);
 
-        Cliente cliente = clienteRepository.findById(1L).get();
+        Cliente cliente = clienteRepository.findById(registroOrdenDto.getClienteId()).get();
         orden.setCliente(cliente);
 
         ordenRepository.save(orden);

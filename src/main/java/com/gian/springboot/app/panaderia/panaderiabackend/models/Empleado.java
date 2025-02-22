@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "empleados")
@@ -47,8 +48,18 @@ public class Empleado {
     @Column(name = "eliminado")
     private Boolean eliminado = false;
 
-    @Column(name = "id_cargo_empleado")
-    private Long idCargoEmpleado;
+    public CargoEmpleado getCargoEmpleado() {
+        return cargoEmpleado;
+    }
+
+    public void setCargoEmpleado(CargoEmpleado cargoEmpleado) {
+        this.cargoEmpleado = cargoEmpleado;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "cargo_empleado_id", nullable = false)
+    private CargoEmpleado cargoEmpleado;
+
 
     public Long getId() {
         return id;
@@ -73,14 +84,6 @@ public class Empleado {
 
     public void setEliminado(Boolean eliminado) {
         this.eliminado = eliminado;
-    }
-
-    public Long getIdCargoEmpleado() {
-        return idCargoEmpleado;
-    }
-
-    public void setIdCargoEmpleado(Long idCargoEmpleado) {
-        this.idCargoEmpleado = idCargoEmpleado;
     }
 
     public String getNombres() {

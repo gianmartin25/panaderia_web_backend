@@ -9,8 +9,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
-@RequestMapping("/registrar-usuario")
+@RequestMapping("/usuarios")
 public class UsuarioClienteController {
 
     @Autowired
@@ -27,4 +29,13 @@ public class UsuarioClienteController {
         Usuario nuevoUsuario = usuarioEmpresaService.crearUsuarioPersona(registroUsuarioPersonaDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevoUsuario);
     }
+
+    @DeleteMapping()
+    public ResponseEntity<Map<String, String>> eliminarUsuario() {
+        usuarioEmpresaService.eliminarUsuarios();
+        Map<String, String> response = Map.of("message", "Usuarios eliminados");
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+
 }

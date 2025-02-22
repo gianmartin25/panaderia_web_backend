@@ -1,5 +1,6 @@
 package com.gian.springboot.app.panaderia.panaderiabackend.controllers;
 
+import com.gian.springboot.app.panaderia.panaderiabackend.dtos.CargoEmpleadoResponseDTO;
 import com.gian.springboot.app.panaderia.panaderiabackend.models.CargoEmpleado;
 import com.gian.springboot.app.panaderia.panaderiabackend.services.CargoEmpleadoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class CargoEmpleadoController {
     }
 
     @GetMapping
-    public List<CargoEmpleado> listarCargosEmpleado() {
+    public List<CargoEmpleadoResponseDTO> listarCargosEmpleado() {
         return cargoEmpleadoService.listarCargosEmpleado();
     }
 
