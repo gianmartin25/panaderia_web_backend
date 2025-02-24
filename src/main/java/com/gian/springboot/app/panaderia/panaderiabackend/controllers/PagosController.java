@@ -1,10 +1,9 @@
 package com.gian.springboot.app.panaderia.panaderiabackend.controllers;
 
-import com.gian.springboot.app.panaderia.panaderiabackend.dtos.ComprobantePagoDTO;
-import com.gian.springboot.app.panaderia.panaderiabackend.dtos.PagosSesionDTO;
-import com.gian.springboot.app.panaderia.panaderiabackend.dtos.ProductoCartRequestDTO;
-import com.gian.springboot.app.panaderia.panaderiabackend.dtos.ProductoCartResponseDTO;
+import com.gian.springboot.app.panaderia.panaderiabackend.dtos.*;
 import com.gian.springboot.app.panaderia.panaderiabackend.models.ComprobantePago;
+import com.gian.springboot.app.panaderia.panaderiabackend.models.MetodoPago;
+import com.gian.springboot.app.panaderia.panaderiabackend.models.Pago;
 import com.gian.springboot.app.panaderia.panaderiabackend.services.ComprobanteDePagoService;
 import com.gian.springboot.app.panaderia.panaderiabackend.services.GestorPagosService;
 import com.gian.springboot.app.panaderia.panaderiabackend.services.ProductoCheckoutService;
@@ -145,6 +144,17 @@ public class PagosController {
 
                 ComprobantePago comprobantePago = comprobanteDePagoService.guardar(comprobantePagoDTO);
 
+                PagoDTO pagoDTO = new PagoDTO();
+                pagoDTO.setMonto(BigDecimal.valueOf(charge.getAmount() / 100));
+                pagoDTO.setMetodoPagoId(1L);
+                pagoDTO.setComprobanteId(comprobantePago.getId());
+                pagoDTO.setMoneda(charge.getCurrency());
+                pagoDTO.setNumeroTarjeta(charge.getPaymentMethodDetails().getCard().getLast4());
+                pagoDTO.setMarca(charge.getPaymentMethodDetails().getCard().getBrand());
+                pagoDTO.setFechaExpiracion(charge.getPaymentMethodDetails().getCard().getExpMonth() + "/" + charge.getPaymentMethodDetails().getCard().getExpYear());
+                pagoDTO.setTitular(charge.getBillingDetails().getName());
+
+                gestorPagosService.savePagoAndPagoTarjeta(pagoDTO, comprobantePago);
             }
 
             return event;

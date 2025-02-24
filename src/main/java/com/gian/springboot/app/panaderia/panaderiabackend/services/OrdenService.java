@@ -33,10 +33,10 @@ public class OrdenService {
 
 
     public List<OrdenResponseDto> obtenerTodasLasOrdenes() {
-        OrdenResponseDto ordenResponseDto = new OrdenResponseDto();
         List<Orden> ordenes = ordenRepository.findAll();
         List<OrdenResponseDto> ordenesResponse = new ArrayList<>();
         for (Orden orden : ordenes) {
+            OrdenResponseDto ordenResponseDto = new OrdenResponseDto();
             ordenResponseDto.setId(orden.getId());
             ordenResponseDto.setEstado(orden.getEstado());
             ordenResponseDto.setFechaCreacion(orden.getFecha().toString());
@@ -53,7 +53,7 @@ public class OrdenService {
                 productoOrdenResponseDTO.setCantidad(detalle.getCantidad());
                 productoOrdenResponseDTO.setPrecio(detalle.getPrecioUnitario());
                 productoOrdenResponseDTO.setSubTotal(detalle.getSubtotal().toString());
-                productoOrdenResponseDTO.setImagen("https://f391-38-253-144-134.ngrok-free.app/api/uploads/" + detalle.getProducto().getImageUrl());
+                productoOrdenResponseDTO.setImagen("http://localhost:8080/api/uploads/" + detalle.getProducto().getImageUrl());
                 productos.add(productoOrdenResponseDTO);
             }
             ordenResponseDto.setProductos(productos);
@@ -63,14 +63,15 @@ public class OrdenService {
     }
 
     public List<OrdenResponseDto> obtenerOrdenesPorCliente(Long id) {
-        OrdenResponseDto ordenResponseDto = new OrdenResponseDto();
         List<Orden> ordenes = ordenRepository.findAllByClienteId(id);
         List<OrdenResponseDto> ordenesResponse = new ArrayList<>();
         for (Orden orden : ordenes) {
+            OrdenResponseDto ordenResponseDto = new OrdenResponseDto();
             ordenResponseDto.setId(orden.getId());
             ordenResponseDto.setEstado(orden.getEstado());
             ordenResponseDto.setFechaCreacion(orden.getFecha().toString());
             ordenResponseDto.setTotal(orden.getTotal().toString());
+            ordenResponseDto.setPagado(orden.getPagado());
             List<ProductoOrdenResponseDTO> productos = new ArrayList<>();
             for (DetalleOrden detalle : orden.getDetalles()) {
                 ProductoOrdenResponseDTO productoOrdenResponseDTO = new ProductoOrdenResponseDTO();
@@ -79,7 +80,7 @@ public class OrdenService {
                 productoOrdenResponseDTO.setCantidad(detalle.getCantidad());
                 productoOrdenResponseDTO.setPrecio(detalle.getPrecioUnitario());
                 productoOrdenResponseDTO.setSubTotal(detalle.getSubtotal().toString());
-                productoOrdenResponseDTO.setImagen("https://f391-38-253-144-134.ngrok-free.app/api/uploads/" + detalle.getProducto().getImageUrl());
+                productoOrdenResponseDTO.setImagen("http://localhost:8080/api/uploads/" + detalle.getProducto().getImageUrl());
                 productos.add(productoOrdenResponseDTO);
             }
             ordenResponseDto.setProductos(productos);

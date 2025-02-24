@@ -1,11 +1,10 @@
 package com.gian.springboot.app.panaderia.panaderiabackend.services;
 
-import com.gian.springboot.app.panaderia.panaderiabackend.dtos.BoletaDTO;
 import com.gian.springboot.app.panaderia.panaderiabackend.dtos.ComprobantePagoDTO;
+import com.gian.springboot.app.panaderia.panaderiabackend.dtos.ComprobanteProductoDTO;
 import com.gian.springboot.app.panaderia.panaderiabackend.models.*;
 import com.gian.springboot.app.panaderia.panaderiabackend.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,7 +13,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class ComprobanteDePagoService {

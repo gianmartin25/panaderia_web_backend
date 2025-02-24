@@ -1,9 +1,11 @@
+// Pago.java
 package com.gian.springboot.app.panaderia.panaderiabackend.models;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 
 @Entity
@@ -13,29 +15,6 @@ public class Pago {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "metodo_pago_id")
-    private MetodoPago metodoPago;
-
-    @Column(name = "monto", nullable = false, precision = 10, scale = 2)
-    private BigDecimal monto;
-
-    @ColumnDefault("now()")
-    @Column(name = "fecha")
-    private OffsetDateTime fecha;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "comprobante_id")
-    private ComprobantePago comprobante;
-
-
-    @Column()
-    private String moneda;
-
-    @ColumnDefault("false")
-    @Column(name = "eliminado")
-    private Boolean eliminado;
 
     public Long getId() {
         return id;
@@ -61,11 +40,11 @@ public class Pago {
         this.monto = monto;
     }
 
-    public OffsetDateTime getFecha() {
+    public LocalDate getFecha() {
         return fecha;
     }
 
-    public void setFecha(OffsetDateTime fecha) {
+    public void setFecha(LocalDate fecha) {
         this.fecha = fecha;
     }
 
@@ -77,6 +56,14 @@ public class Pago {
         this.comprobante = comprobante;
     }
 
+    public String getMoneda() {
+        return moneda;
+    }
+
+    public void setMoneda(String moneda) {
+        this.moneda = moneda;
+    }
+
     public Boolean getEliminado() {
         return eliminado;
     }
@@ -85,12 +72,37 @@ public class Pago {
         this.eliminado = eliminado;
     }
 
-
-    public String getMoneda() {
-        return moneda;
+    public PagoTarjeta getPagoTarjeta() {
+        return pagoTarjeta;
     }
 
-    public void setMoneda(String moneda) {
-        this.moneda = moneda;
+    public void setPagoTarjeta(PagoTarjeta pagoTarjeta) {
+        this.pagoTarjeta = pagoTarjeta;
     }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "metodo_pago_id")
+    private MetodoPago metodoPago;
+
+    @Column(name = "monto", nullable = false, precision = 10, scale = 2)
+    private BigDecimal monto;
+
+    @Column(name = "fecha")
+    private LocalDate fecha = LocalDate.now();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "comprobante_id")
+    private ComprobantePago comprobante;
+
+    @Column()
+    private String moneda;
+
+    @ColumnDefault("false")
+    @Column(name = "eliminado")
+    private Boolean eliminado;
+
+    @OneToOne(mappedBy = "pago")
+    private PagoTarjeta pagoTarjeta;
+
+    // Getters and setters
 }

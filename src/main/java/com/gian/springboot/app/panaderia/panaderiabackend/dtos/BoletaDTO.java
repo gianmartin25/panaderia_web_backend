@@ -1,7 +1,5 @@
 package com.gian.springboot.app.panaderia.panaderiabackend.dtos;
 
-import com.gian.springboot.app.panaderia.panaderiabackend.models.ComprobanteProductoDTO;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;

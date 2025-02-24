@@ -1,4 +1,4 @@
-package com.gian.springboot.app.panaderia.panaderiabackend.models;
+package com.gian.springboot.app.panaderia.panaderiabackend.dtos;
 
 import java.math.BigDecimal;
 
