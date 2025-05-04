@@ -1,11 +1,12 @@
 package com.gian.springboot.app.panaderia.panaderiabackend.dtos;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class InventarioProductoDTO {
     private Long id;
     private int cantidad;
-    private LocalDateTime fechaIngreso;
+    private LocalDate fechaIngreso;
     private String productoName;
     private Long productoId;
 
@@ -33,11 +34,11 @@ public class InventarioProductoDTO {
         this.cantidad = cantidad;
     }
 
-    public LocalDateTime getFechaIngreso() {
+    public LocalDate getFechaIngreso() {
         return fechaIngreso;
     }
 
-    public void setFechaIngreso(LocalDateTime fechaIngreso) {
+    public void setFechaIngreso(LocalDate fechaIngreso) {
         this.fechaIngreso = fechaIngreso;
     }
 

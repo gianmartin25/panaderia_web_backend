@@ -3,6 +3,7 @@ package com.gian.springboot.app.panaderia.panaderiabackend.models;
 import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -20,9 +21,8 @@ public class InventarioProducto {
     @Column(name = "cantidad", nullable = false)
     private int cantidad;
 
-    @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "fecha_ingreso")
-    private LocalDateTime fechaIngreso = LocalDateTime.now();
+    private LocalDate fechaIngreso = LocalDate.now();
 
     // Getters and Setters
     public Long getId() {
@@ -49,11 +49,11 @@ public class InventarioProducto {
         this.cantidad = cantidad;
     }
 
-    public LocalDateTime getFechaIngreso() {
+    public LocalDate getFechaIngreso() {
         return fechaIngreso;
     }
 
-    public void setFechaIngreso(LocalDateTime fechaIngreso) {
+    public void setFechaIngreso(LocalDate fechaIngreso) {
         this.fechaIngreso = fechaIngreso;
     }
 }
