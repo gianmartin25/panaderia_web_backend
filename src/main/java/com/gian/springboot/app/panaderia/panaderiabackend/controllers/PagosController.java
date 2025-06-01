@@ -5,6 +5,7 @@ import com.gian.springboot.app.panaderia.panaderiabackend.models.ComprobantePago
 import com.gian.springboot.app.panaderia.panaderiabackend.models.MetodoPago;
 import com.gian.springboot.app.panaderia.panaderiabackend.models.Pago;
 import com.gian.springboot.app.panaderia.panaderiabackend.services.ComprobanteDePagoService;
+import com.gian.springboot.app.panaderia.panaderiabackend.services.EmailService;
 import com.gian.springboot.app.panaderia.panaderiabackend.services.GestorPagosService;
 import com.gian.springboot.app.panaderia.panaderiabackend.services.ProductoCheckoutService;
 import com.google.gson.JsonElement;
@@ -37,6 +38,9 @@ public class PagosController {
 
     @Autowired
     ComprobanteDePagoService comprobanteDePagoService;
+
+    @Autowired
+    EmailService emailService;
 
     private static final String STRIPE_WEBHOOK_SECRET = "whsec_VdZuMxYlTokIJV74YsXVzA6d1kMQZGZr";
 
@@ -143,6 +147,26 @@ public class PagosController {
                 comprobantePagoDTO.setNumero(charge.getId());
 
                 ComprobantePago comprobantePago = comprobanteDePagoService.guardar(comprobantePagoDTO);
+                // Generate the PDF receipt
+                byte[] pdfReceipt = comprobanteDePagoService.generarBoleta(comprobantePago.getId());
+
+                // Send the receipt via email
+                String customerEmail = charge.getBillingDetails().getEmail();
+                String subject = "Comprobante de Pago - Panadería Cremas & Hojas";
+                String content = """
+                           <html>
+                                       <body style="font-family: Arial, sans-serif; text-align: center; background-color: #f9f9f9; padding: 20px;">
+                                           <img src="cid:logoImage" alt="Logo" style="width: 100px; margin-top: 20px;">
+                                           <h1 style="color: #4CAF50;">🎉 ¡Gracias por tu compra! 🎉</h1>
+                                           <p style="font-size: 18px; color: #333;">Estamos encantados de que hayas elegido Panadería Cremas & Hojas. 🥐</p>
+                                           <p style="font-size: 16px; color: #555;">Adjunto encontrarás tu comprobante de pago. 📄</p>
+                                           <p style="font-size: 16px; color: #555;">Si tienes alguna consulta, no dudes en contactarnos. 📞</p>
+                                           <p style="margin-top: 20px; font-size: 14px; color: #888;">¡Esperamos verte pronto! 🛒</p>
+                                       </body>
+                                       </html>
+                        """;
+
+                emailService.sendEmailWithAttachment(customerEmail, subject, content, pdfReceipt, "comprobante_pago.pdf");
 
                 PagoDTO pagoDTO = new PagoDTO();
                 pagoDTO.setMonto(BigDecimal.valueOf(charge.getAmount() / 100));

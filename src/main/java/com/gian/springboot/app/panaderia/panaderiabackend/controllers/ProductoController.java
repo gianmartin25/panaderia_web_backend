@@ -22,11 +22,19 @@ public class ProductoController {
     private ProductoService productoService;
 
     @PostMapping
-    public ResponseEntity<ProductoDTO> crearProducto(
+    public ResponseEntity<?> crearProducto(
             @RequestPart("producto") RegistroProductoDTO productoDTO,
-            @RequestPart("imagen") MultipartFile imagen) throws IOException {
-        ProductoDTO nuevoProducto = productoService.guardarProducto(productoDTO, imagen);
-        return ResponseEntity.status(HttpStatus.CREATED).body(nuevoProducto);
+            @RequestPart("imagen") MultipartFile imagen) {
+        try {
+            ProductoDTO nuevoProducto = productoService.guardarProducto(productoDTO, imagen);
+            return ResponseEntity.status(HttpStatus.CREATED).body(nuevoProducto);
+        } catch (RuntimeException ex) {
+            // Captura la excepción y devuelve un mensaje de error con código 400
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", ex.getMessage()));
+        } catch (IOException ex) {
+            // Manejo de errores relacionados con la imagen
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Error al procesar la imagen: " + ex.getMessage()));
+        }
     }
 
     @GetMapping("/pagination")
@@ -34,11 +42,14 @@ public class ProductoController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "0") String categoriaId,
-            @RequestParam(defaultValue = "") String nombre
+            @RequestParam(defaultValue = "") String nombre,
+            @RequestParam(defaultValue = "nombre") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDirection
     ) {
-        Map<String, Object> productos = productoService.buscarProductosPorNombreYCategoria(page, size, categoriaId, nombre);
-        return productos;
-    };
+        return productoService.buscarProductosPorNombreYCategoria(page, size, categoriaId, nombre, sortBy, sortDirection);
+    }
+
+
 
     @GetMapping
     public List<ProductoDTO> listarProductos() {
@@ -61,6 +72,18 @@ public class ProductoController {
     public ResponseEntity<Void> eliminarProducto(@PathVariable Long id) {
         productoService.eliminarProducto(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/verificar-stock")
+    public ResponseEntity<?> verificarStock(
+            @RequestParam Long productoId,
+            @RequestParam int cantidad) {
+        try {
+            boolean stockDisponible = productoService.verificarStock(productoId, cantidad);
+            return ResponseEntity.ok(Map.of("productoId", productoId, "stockDisponible", stockDisponible));
+        } catch (RuntimeException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", ex.getMessage()));
+        }
     }
 }
 

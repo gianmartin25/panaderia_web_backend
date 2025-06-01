@@ -41,6 +41,8 @@ public class UsuarioClienteController {
     }
 
 
+
+
     @DeleteMapping()
     public ResponseEntity<Map<String, String>> eliminarUsuario() {
         usuarioService.eliminarUsuarios();

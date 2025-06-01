@@ -34,17 +34,23 @@ public class EmpleadoService {
 
     @Transactional
     public EmpleadoDto registrarEmpleado(RegistroEmpleadoDTO registroEmpleadoDto) {
-        // Verificar si el cargo del empleado existe
-        if (cargoEmpleadoService.obtenerCargoEmpleado(registroEmpleadoDto.getIdCargoEmpleado()) == null) {
+        // Check if the email already exists
+        if (empleadoRepository.existsByEmail(registroEmpleadoDto.getEmail())) {
+            throw new IllegalArgumentException("El correo electrónico ya está registrado en el sistema.");
+        }
+
+        // Verify if the employee's position exists
+        CargoEmpleado cargoEmpleado = cargoEmpleadoService.obtenerCargoEmpleado(registroEmpleadoDto.getIdCargoEmpleado());
+        if (cargoEmpleado == null) {
             throw new IllegalArgumentException("El cargo del empleado no existe");
         }
 
-        // Crear y guardar la persona
+        // Create and save the Persona
         Persona persona = new Persona();
         persona.setApellidos(registroEmpleadoDto.getApellidos());
         persona.setFechaNacimiento(registroEmpleadoDto.getFechaNacimiento());
 
-        // Crear y guardar el documento
+        // Create and save the Documento
         Documento documento = new Documento();
         documento.setNumero(registroEmpleadoDto.getDocumento());
         if (tipoDocumentoRepository.existsById(registroEmpleadoDto.getTipoDocumento())) {
@@ -55,50 +61,42 @@ public class EmpleadoService {
         persona.setDocumento(documento);
         personaRepository.save(persona);
 
-        CargoEmpleado cargoEmpleado = cargoEmpleadoService.obtenerCargoEmpleado(registroEmpleadoDto.getIdCargoEmpleado());
-
-        if (cargoEmpleado == null) {
-            throw new IllegalArgumentException("El cargo del empleado no existe");
-        }
-        // Crear y asignar el empleado
+        // Create and assign the Empleado
         Empleado empleado = new Empleado();
+        empleado.setEmail(registroEmpleadoDto.getEmail());
         empleado.setCargoEmpleado(cargoEmpleado);
         empleado.setFechaContratacion(registroEmpleadoDto.getFechaContratacion());
         empleado.setNombres(registroEmpleadoDto.getNombres());
         empleado.setPersona(persona);
 
-
-
-
-        // Guardar el empleado en la base de datos
+        // Save the Empleado in the database
         Empleado empleadoGuardado = empleadoRepository.save(empleado);
+
+        // Map to EmpleadoDto
         EmpleadoDto empleadoDto = new EmpleadoDto();
         empleadoDto.setId(empleadoGuardado.getId());
         empleadoDto.setNombres(empleadoGuardado.getNombres());
-        empleadoDto.setApellidos(empleadoGuardado.getPersonaApellidos());
-        empleadoDto.setPersonaId(empleadoGuardado.getPersonaId());
+        empleadoDto.setApellidos(empleadoGuardado.getPersona().getApellidos());
+        empleadoDto.setPersonaId(empleadoGuardado.getPersona().getId());
         empleadoDto.setFechaContratacion(empleadoGuardado.getFechaContratacion());
         empleadoDto.setIdCargoEmpleado(empleadoGuardado.getCargoEmpleado().getId());
-        empleadoDto.setFechaNacimiento(empleadoGuardado.getPersonaFechaNacimiento());
+        empleadoDto.setFechaNacimiento(empleadoGuardado.getPersona().getFechaNacimiento());
         empleadoDto.setCargoEmpleado(empleadoGuardado.getCargoEmpleado().getNombre());
-        Documento documentoGuardado = documentoRepository.findDocumentoById(empleadoGuardado.getPersonaId());
+
+        Documento documentoGuardado = documentoRepository.findDocumentoById(empleadoGuardado.getPersona().getId());
         if (documentoGuardado != null) {
             empleadoDto.setTipoDocumento(documentoGuardado.getTipoDocumento().getNombre());
             empleadoDto.setDocumento(documentoGuardado.getNumero());
         }
         empleadoDto.setEliminado(empleadoGuardado.getEliminado());
-        empleadoDto.setDocumento(documento.getNumero());
-        empleadoDto.setTipoDocumento(documento.getTipoDocumento().getNombre());
 
         return empleadoDto;
-
     }
-
-
     public Empleado obtenerEmpleado(Long id) {
         Optional<Empleado> empleado = empleadoRepository.findById(id);
         return empleado.orElse(null);
     }
+
 
     public List<EmpleadoDto> listarEmpleados() {
         List<Empleado> empleados = empleadoRepository.findAll();
@@ -107,26 +105,24 @@ public class EmpleadoService {
             EmpleadoDto empleadoDTO = new EmpleadoDto();
             empleadoDTO.setId(empleado.getId());
             empleadoDTO.setNombres(empleado.getNombres());
-            empleadoDTO.setApellidos(empleado.getPersonaApellidos());
-            empleadoDTO.setPersonaId(empleado.getPersonaId());
+            empleadoDTO.setApellidos(empleado.getPersona().getApellidos()); // Access Persona's apellidos
+            empleadoDTO.setPersonaId(empleado.getPersona().getId()); // Access Persona's ID
             empleadoDTO.setFechaContratacion(empleado.getFechaContratacion());
             empleadoDTO.setEliminado(empleado.getEliminado());
             empleadoDTO.setIdCargoEmpleado(empleado.getCargoEmpleado().getId());
-            empleadoDTO.setFechaNacimiento(empleado.getPersonaFechaNacimiento());
+            empleadoDTO.setFechaNacimiento(empleado.getPersona().getFechaNacimiento()); // Access Persona's fechaNacimiento
             empleadoDTO.setCargoEmpleado(cargoEmpleadoService.obtenerCargoEmpleado(empleado.getCargoEmpleado().getId()).getNombre());
+            empleadoDTO.setEmail(empleado.getEmail());
 
-            // Obtener documentos asociados a la persona del empleado
-            Documento documento = documentoRepository.findDocumentoById(empleado.getPersonaId());
+            Documento documento = documentoRepository.findDocumentoById(empleado.getPersona().getId());
             if (documento != null) {
-                String tipoDocumento = documento.getTipoDocumento().getNombre();
-                empleadoDTO.setTipoDocumento(tipoDocumento);
+                empleadoDTO.setTipoDocumento(documento.getTipoDocumento().getNombre());
                 empleadoDTO.setDocumento(documento.getNumero());
             }
 
             return empleadoDTO;
         }).collect(Collectors.toList());
     }
-
     public Empleado actualizarEmpleado(Long id, Empleado empleado) {
         if (empleadoRepository.existsById(id)) {
             empleado.setId(id);

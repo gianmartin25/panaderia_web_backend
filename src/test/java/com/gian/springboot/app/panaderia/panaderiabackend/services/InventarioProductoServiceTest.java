@@ -54,7 +54,7 @@ class InventarioProductoServiceTest {
         when(inventarioProductoRepository.save(any(InventarioProducto.class))).thenReturn(inventarioProducto);
         when(productoRepository.save(any(Producto.class))).thenReturn(producto);
 
-        InventarioProductoDTO result = inventarioProductoService.agregarInventario(registroInventarioProductoDTO);
+        InventarioProductoDTO result = inventarioProductoService.registrarMovimientoInventario(registroInventarioProductoDTO);
 
         assertNotNull(result);
         assertEquals(1L, result.getId());

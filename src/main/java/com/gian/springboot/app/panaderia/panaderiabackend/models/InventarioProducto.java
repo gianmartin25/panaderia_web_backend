@@ -21,8 +21,23 @@ public class InventarioProducto {
     @Column(name = "cantidad", nullable = false)
     private int cantidad;
 
-    @Column(name = "fecha_ingreso")
-    private LocalDate fechaIngreso = LocalDate.now();
+    @ManyToOne
+    @JoinColumn(name = "tipo_movimiento_id", nullable = false)
+    private TipoMovimiento tipoMovimiento;
+
+    // Getter and Setter for tipoMovimiento
+    public TipoMovimiento getTipoMovimiento() {
+        return tipoMovimiento;
+    }
+
+    public void setTipoMovimiento(TipoMovimiento tipoMovimiento) {
+        this.tipoMovimiento = tipoMovimiento;
+    }
+
+    @Column(name = "fecha_registro")
+    private LocalDate fechaRegistro = LocalDate.now();
+
+
 
     // Getters and Setters
     public Long getId() {
@@ -49,11 +64,11 @@ public class InventarioProducto {
         this.cantidad = cantidad;
     }
 
-    public LocalDate getFechaIngreso() {
-        return fechaIngreso;
+    public LocalDate getFechaRegistro() {
+        return fechaRegistro;
     }
 
-    public void setFechaIngreso(LocalDate fechaIngreso) {
-        this.fechaIngreso = fechaIngreso;
+    public void setFechaRegistro(LocalDate fechaRegistro) {
+        this.fechaRegistro = fechaRegistro;
     }
 }

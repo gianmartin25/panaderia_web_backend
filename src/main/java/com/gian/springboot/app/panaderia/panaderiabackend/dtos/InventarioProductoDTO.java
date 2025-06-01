@@ -6,9 +6,11 @@ import java.time.LocalDateTime;
 public class InventarioProductoDTO {
     private Long id;
     private int cantidad;
-    private LocalDate fechaIngreso;
+    private LocalDate fechaRegistro;
     private String productoName;
     private Long productoId;
+    private Long tipoMovimientoId;
+    private String tipoMovimientoNombre;
 
     public String getProductoName() {
         return productoName;
@@ -34,12 +36,12 @@ public class InventarioProductoDTO {
         this.cantidad = cantidad;
     }
 
-    public LocalDate getFechaIngreso() {
-        return fechaIngreso;
+    public LocalDate getFechaRegistro() {
+        return fechaRegistro;
     }
 
-    public void setFechaIngreso(LocalDate fechaIngreso) {
-        this.fechaIngreso = fechaIngreso;
+    public void setFechaRegistro(LocalDate fechaRegistro) {
+        this.fechaRegistro = fechaRegistro;
     }
 
     public Long getProductoId() {
@@ -51,4 +53,19 @@ public class InventarioProductoDTO {
     }
 
 
+    public Long getTipoMovimientoId() {
+        return tipoMovimientoId;
+    }
+
+    public void setTipoMovimientoId(Long tipoMovimientoId) {
+        this.tipoMovimientoId = tipoMovimientoId;
+    }
+
+    public String getTipoMovimientoNombre() {
+        return tipoMovimientoNombre;
+    }
+
+    public void setTipoMovimientoNombre(String tipoMovimientoNombre) {
+        this.tipoMovimientoNombre = tipoMovimientoNombre;
+    }
 }

@@ -34,8 +34,9 @@ public class MyStartupService implements CommandLineRunner {
             RegistroInventarioProductoDTO registroInventarioProductoDTO = new RegistroInventarioProductoDTO();
             registroInventarioProductoDTO.setProductoId((long) i);
             registroInventarioProductoDTO.setCantidad(10);
+            registroInventarioProductoDTO.setTipoMovimientoId(1L); // Assuming 1 is the ID for "INGRESO"
 
-            inventarioProductoService.agregarInventario(registroInventarioProductoDTO);
+            inventarioProductoService.registrarMovimientoInventario(registroInventarioProductoDTO);
 
         }
     }

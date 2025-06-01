@@ -3,6 +3,7 @@ package com.gian.springboot.app.panaderia.panaderiabackend.dtos;
 public class RegistroInventarioProductoDTO {
     private Long productoId;
     private int cantidad;
+    private  Long tipoMovimientoId;
 
     public Long getProductoId() {
         return productoId;
@@ -20,4 +21,12 @@ public class RegistroInventarioProductoDTO {
         this.cantidad = cantidad;
     }
 
+
+    public Long getTipoMovimientoId() {
+        return tipoMovimientoId;
+    }
+
+    public void setTipoMovimientoId(Long tipoMovimientoId) {
+        this.tipoMovimientoId = tipoMovimientoId;
+    }
 }

@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Entity
 @Table(name = "empleados")
@@ -22,25 +21,6 @@ public class Empleado {
     @Column(name = "fecha_contratacion")
     private LocalDate fechaContratacion;
 
-    @JsonProperty("personaId")
-    public Long getPersonaId() {
-        return persona != null ? persona.getId() : null;
-    }
-
-    @JsonProperty("apellidos")
-    public String getPersonaApellidos() {
-        return persona != null ? persona.getApellidos() : null;
-    }
-
-    @JsonProperty("fechaNacimiento")
-    public LocalDate getPersonaFechaNacimiento() {
-        return persona != null ? persona.getFechaNacimiento() : null;
-    }
-
-    public void setPersona(Persona persona) {
-        this.persona = persona;
-    }
-
     @Column(name = "nombres")
     private String nombres;
 
@@ -48,19 +28,14 @@ public class Empleado {
     @Column(name = "eliminado")
     private Boolean eliminado = false;
 
-    public CargoEmpleado getCargoEmpleado() {
-        return cargoEmpleado;
-    }
-
-    public void setCargoEmpleado(CargoEmpleado cargoEmpleado) {
-        this.cargoEmpleado = cargoEmpleado;
-    }
-
     @ManyToOne
     @JoinColumn(name = "cargo_empleado_id", nullable = false)
     private CargoEmpleado cargoEmpleado;
 
+    @Column(name = "email", length = Integer.MAX_VALUE, unique = true)
+    private String email; // New email field
 
+    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -69,6 +44,13 @@ public class Empleado {
         this.id = id;
     }
 
+    public Persona getPersona() {
+        return persona;
+    }
+
+    public void setPersona(Persona persona) {
+        this.persona = persona;
+    }
 
     public LocalDate getFechaContratacion() {
         return fechaContratacion;
@@ -76,6 +58,14 @@ public class Empleado {
 
     public void setFechaContratacion(LocalDate fechaContratacion) {
         this.fechaContratacion = fechaContratacion;
+    }
+
+    public String getNombres() {
+        return nombres;
+    }
+
+    public void setNombres(String nombres) {
+        this.nombres = nombres;
     }
 
     public Boolean getEliminado() {
@@ -86,11 +76,19 @@ public class Empleado {
         this.eliminado = eliminado;
     }
 
-    public String getNombres() {
-        return nombres;
+    public CargoEmpleado getCargoEmpleado() {
+        return cargoEmpleado;
     }
 
-    public void setNombres(String nombres) {
-        this.nombres = nombres;
+    public void setCargoEmpleado(CargoEmpleado cargoEmpleado) {
+        this.cargoEmpleado = cargoEmpleado;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

@@ -1,7 +1,6 @@
 package com.gian.springboot.app.panaderia.panaderiabackend.models;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.Check;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDate;
@@ -26,21 +25,23 @@ public class Cliente {
     @Column(name = "nombres", length = Integer.MAX_VALUE)
     private String nombres;
 
+    @Column(name = "email", length = Integer.MAX_VALUE, unique = true)
+    private String email; // Nuevo campo para el email del cliente
 
-
-    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Persona> persona = new ArrayList<>();
 
-    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Empresa> empresa = new ArrayList<>();
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "tipo_cliente_id")
     private TipoCliente tipoCliente;
 
     @Column(name = "telefono", length = Integer.MAX_VALUE)
     private String telefono;
 
+    // Getters y Setters
     public Long getId() {
         return id;
     }
@@ -73,6 +74,14 @@ public class Cliente {
         this.nombres = nombres;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public String getTelefono() {
         return telefono;
     }
@@ -80,8 +89,6 @@ public class Cliente {
     public void setTelefono(String telefono) {
         this.telefono = telefono;
     }
-
-
 
     public TipoCliente getTipoCliente() {
         return tipoCliente;
@@ -106,5 +113,4 @@ public class Cliente {
     public void setEmpresa(List<Empresa> empresa) {
         this.empresa = empresa;
     }
-
 }

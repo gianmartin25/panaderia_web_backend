@@ -7,6 +7,7 @@ public class RegistroEmpleadoDTO {
     private String nombres;
     private String apellidos;
     private String documento;
+    private  String email;
     private Long tipoDocumento;
     private LocalDate fechaContratacion;
     private LocalDate fechaNacimiento;
@@ -70,5 +71,11 @@ public class RegistroEmpleadoDTO {
     }
 
 
+    public String getEmail() {
+        return email;
+    }
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
 }

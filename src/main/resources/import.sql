@@ -42,16 +42,16 @@ INSERT INTO personas ( apellidos, fecha_nacimiento,documento_id) VALUES ( 'Ramir
 INSERT INTO personas ( apellidos, fecha_nacimiento,documento_id) VALUES ( 'Vargas', '1999-10-10',10);
 -- Agrega más personas según sea necesario
 -- Insertar en la tabla Empleado
-INSERT INTO empleados (persona_id, cargo_empleado_id, fecha_contratacion,nombres) VALUES (1, 1, '2020-01-01','Juan');
-INSERT INTO empleados ( persona_id, cargo_empleado_id, fecha_contratacion,nombres) VALUES ( 2, 2, '2020-02-02','Ana');
-INSERT INTO empleados ( persona_id, cargo_empleado_id, fecha_contratacion,nombres) VALUES ( 3, 1, '2020-03-03','Luis');
-INSERT INTO empleados ( persona_id, cargo_empleado_id, fecha_contratacion,nombres) VALUES ( 4, 2, '2020-04-04','Maria');
-INSERT INTO empleados (persona_id, cargo_empleado_id, fecha_contratacion,nombres) VALUES ( 5, 1, '2020-05-05','Carlos');
-INSERT INTO empleados ( persona_id, cargo_empleado_id, fecha_contratacion,nombres) VALUES ( 6, 2, '2020-06-06','David');
-INSERT INTO empleados ( persona_id, cargo_empleado_id, fecha_contratacion,nombres) VALUES ( 7, 1, '2020-07-07','Eva');
-INSERT INTO empleados ( persona_id, cargo_empleado_id, fecha_contratacion,nombres) VALUES ( 8, 2, '2020-08-08','Frank');
-INSERT INTO empleados ( persona_id, cargo_empleado_id, fecha_contratacion,nombres) VALUES (9, 1, '2020-09-09','Gina');
-INSERT INTO empleados ( persona_id, cargo_empleado_id, fecha_contratacion,nombres) VALUES (10, 2, '2020-10-10','Hugo');
+INSERT INTO empleados (persona_id, cargo_empleado_id, fecha_contratacion,nombres,email) VALUES (1, 1, '2020-01-01','Juan','juan@google.com');
+INSERT INTO empleados ( persona_id, cargo_empleado_id, fecha_contratacion,nombres,email) VALUES ( 2, 2, '2020-02-02','Ana', 'ana@google.com');
+INSERT INTO empleados ( persona_id, cargo_empleado_id, fecha_contratacion,nombres,email) VALUES ( 3, 1, '2020-03-03','Luis','luis@google.com');
+INSERT INTO empleados ( persona_id, cargo_empleado_id, fecha_contratacion,nombres,email) VALUES ( 4, 2, '2020-04-04','Maria','maria@google.com');
+INSERT INTO empleados (persona_id, cargo_empleado_id, fecha_contratacion,nombres,email) VALUES ( 5, 1, '2020-05-05','Carlos','carlos@google.com');
+INSERT INTO empleados ( persona_id, cargo_empleado_id, fecha_contratacion,nombres,email) VALUES ( 6, 2, '2020-06-06','David','david@google.com');
+INSERT INTO empleados ( persona_id, cargo_empleado_id, fecha_contratacion,nombres,email) VALUES ( 7, 1, '2020-07-07','Eva','eva@googe.com');
+INSERT INTO empleados ( persona_id, cargo_empleado_id, fecha_contratacion,nombres,email) VALUES ( 8, 2, '2020-08-08','Frank','frank@google.com');
+INSERT INTO empleados ( persona_id, cargo_empleado_id, fecha_contratacion,nombres,email) VALUES (9, 1, '2020-09-09','Gina','gina@google.com');
+INSERT INTO empleados ( persona_id, cargo_empleado_id, fecha_contratacion,nombres,email) VALUES (10, 2, '2020-10-10','Hugo','hugo@google.com');
 -- Agrega más empleados según sea necesario
 
 INSERT INTO categorias (nombre) VALUES ('Todo');
@@ -69,3 +69,6 @@ INSERT INTO  metodo_pago (nombre) VALUES ('Tarjeta');
 
 INSERT INTO tipos_comprobante (nombre) VALUES ('Factura');
 INSERT INTO tipos_comprobante (nombre) VALUES ('Boleta');
+
+INSERT  INTO tipos_movimiento (nombre) VALUES ('INGRESO');
+INSERT  INTO tipos_movimiento (nombre) VALUES ('SALIDA');

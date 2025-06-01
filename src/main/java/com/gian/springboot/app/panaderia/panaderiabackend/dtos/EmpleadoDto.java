@@ -93,12 +93,23 @@ public class EmpleadoDto {
     public void setTipoDocumento(String tipoDocumento) {
         this.tipoDocumento = tipoDocumento;
     }
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     private LocalDate fechaContratacion;
     private String nombres;
     private Boolean eliminado;
     private Long idCargoEmpleado;
     private String apellidos;
+
+
+
+    private String email;
     private LocalDate fechaNacimiento;
     private Long personaId;
     private String cargoEmpleado;

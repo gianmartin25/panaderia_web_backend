@@ -1,7 +1,5 @@
 package com.gian.springboot.app.panaderia.panaderiabackend.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
 
@@ -16,32 +14,28 @@ public class Usuario {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "username", nullable = false, length = Integer.MAX_VALUE,unique = true)
+    @Column(name = "username", nullable = false, length = Integer.MAX_VALUE, unique = true)
     private String username;
 
     @Column(name = "password", nullable = false, length = Integer.MAX_VALUE)
     private String password;
 
-    @Column(name = "email", length = Integer.MAX_VALUE,unique = true)
-    private String email;
-
     @ColumnDefault("false")
     @Column(name = "eliminado")
     private Boolean eliminado;
-
 
     @ColumnDefault("'client'")
     @Column(name = "tipo_usuario", length = Integer.MAX_VALUE)
     private String tipoUsuario;
 
+    @ColumnDefault("false")
+    @Column(name = "verificado", nullable = false)
+    private Boolean verificado = false; // New field for account verification
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private List<Cliente> cliente = new ArrayList<>();
 
-//    @OneToOne(fetch = FetchType.LAZY,orphanRemoval = true)
-//    private Empleado empleado;
-
+    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -66,14 +60,6 @@ public class Usuario {
         this.password = password;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public Boolean getEliminado() {
         return eliminado;
     }
@@ -90,6 +76,14 @@ public class Usuario {
         this.tipoUsuario = tipoUsuario;
     }
 
+    public Boolean getVerificado() {
+        return verificado;
+    }
+
+    public void setVerificado(Boolean verificado) {
+        this.verificado = verificado;
+    }
+
     public List<Cliente> getCliente() {
         return cliente;
     }
@@ -97,5 +91,4 @@ public class Usuario {
     public void setCliente(List<Cliente> cliente) {
         this.cliente = cliente;
     }
-
 }

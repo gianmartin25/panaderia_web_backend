@@ -38,8 +38,16 @@ public class AuthController {
             claims.put("token", "Bearer " + token);
 
             return ResponseEntity.ok(claims);
+        } catch (RuntimeException e) {
+            // Handle invalid credentials or unverified account
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("error", e.getMessage());
+            return ResponseEntity.status(401).body(errorResponse);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Invalid credentials.");
+            // Handle unexpected errors
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("error", "An unexpected error occurred.");
+            return ResponseEntity.status(500).body(errorResponse);
         }
     }
 
@@ -56,4 +64,6 @@ public class AuthController {
             throw new BadRequestException("Invalid token.");
         }
     }
+
+
 }

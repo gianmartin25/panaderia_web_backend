@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -38,6 +39,11 @@ public class ProductoService {
 
     // Guardar producto y su imagen
     public ProductoDTO guardarProducto(RegistroProductoDTO registroProductoDTO, MultipartFile imagen) throws IOException {
+        // Check if a product with the same name already exists
+        if (productoRepository.existsByNombreIgnoreCase(registroProductoDTO.getNombre())) {
+            throw new RuntimeException("Ya existe un producto con el nombre: " + registroProductoDTO.getNombre());
+        }
+
         Producto producto = new Producto();
 
         if (!imagen.isEmpty()) {
@@ -72,15 +78,15 @@ public class ProductoService {
         return productoDTO;
     }
 
-    public Map<String, Object> buscarProductosPorNombreYCategoria(int page, int size, String categoriaId,String nombre ) {
-        Pageable pageable = PageRequest.of(page - 1, size);
+    public Map<String, Object> buscarProductosPorNombreYCategoria(int page, int size, String categoriaId, String nombre, String sortBy, String sortDirection) {
+        Pageable pageable = PageRequest.of(page - 1, size,
+                sortDirection.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending());
         Page<Producto> productosPage;
 
         if (categoriaId.equals("1")) {
-            productosPage = productoRepository.findByNombreContainingIgnoreCase(nombre, pageable);
-
+            productosPage = productoRepository.findByNombreContainingIgnoreCaseAndTotalCantidadGreaterThan(nombre, 0, pageable);
         } else {
-            productosPage = productoRepository.findByNombreContainingIgnoreCaseAndCategoriaId(nombre, Long.parseLong(categoriaId), pageable);
+            productosPage = productoRepository.findByNombreContainingIgnoreCaseAndCategoriaIdAndTotalCantidadGreaterThan(nombre, Long.parseLong(categoriaId), 0, pageable);
         }
 
         List<ProductoDTO> productos = productosPage.getContent().stream().map(producto -> {
@@ -94,6 +100,7 @@ public class ProductoService {
             productoDTO.setCategoriaNombre(producto.getCategoria().getNombre());
             productoDTO.setProveedorId(producto.getProveedor().getId());
             productoDTO.setProveedorNombre(producto.getProveedor().getNombre());
+            productoDTO.setTotalCantidad(producto.getTotalCantidad());
             return productoDTO;
         }).collect(Collectors.toList());
 
@@ -103,8 +110,16 @@ public class ProductoService {
         response.put("totalItems", productosPage.getTotalElements());
         response.put("totalPages", productosPage.getTotalPages());
         response.put("categoriaId", categoriaId);
+        response.put("sortBy", sortBy);
+        response.put("sortDirection", sortDirection);
 
         return response;
+    }
+
+    public boolean verificarStock(Long productoId, int cantidad) {
+        Producto producto = productoRepository.findById(productoId)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+        return producto.getTotalCantidad() >= cantidad;
     }
 
     public List<ProductoDTO> listarProductos() {
@@ -115,8 +130,8 @@ public class ProductoService {
             productoDTO.setNombre(producto.getNombre());
             productoDTO.setDescripcion(producto.getDescripcion());
             productoDTO.setPrecio(producto.getPrecio());
-            productoDTO.setImageUrl(producto.getImageUrl());
             productoDTO.setCategoriaId(producto.getCategoria().getId());
+            productoDTO.setImageUrl(producto.getImageUrl());
             productoDTO.setCategoriaNombre(producto.getCategoria().getNombre());
             productoDTO.setProveedorId(producto.getProveedor().getId());
             productoDTO.setProveedorNombre(producto.getProveedor().getNombre());
@@ -180,11 +195,11 @@ public class ProductoService {
                 new RegistroProductoDTO("Torta Selva Negra","Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrevivió 500 años, sino que tambien ingresó como texto de relleno en documentos electrónicos, quedando esencialmente igual al original. Fue popularizado en los 60s con la creación de las hojas , las cuales contenian pasajes de Lorem Ipsum, y más recientemente con software de autoedición, como por ejemplo Aldus PageMaker, el cual incluye versiones de Lorem Ipsum. 7",new BigDecimal(50),2L,1L),
                 new RegistroProductoDTO("Torta Carlota (Torta Helada)","Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrevivió 500 años, sino que tambien ingresó como texto de relleno en documentos electrónicos, quedando esencialmente igual al original. Fue popularizado en los 60s con la creación de las hojas , las cuales contenian pasajes de Lorem Ipsum, y más recientemente con software de autoedición, como por ejemplo Aldus PageMaker, el cual incluye versiones de Lorem Ipsum. 8",new BigDecimal(50),2L,1L),
                 new RegistroProductoDTO("Torta Sonic","Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrevivió 500 años, sino que tambien ingresó como texto de relleno en documentos electrónicos, quedando esencialmente igual al original. Fue popularizado en los 60s con la creación de las hojas , las cuales contenian pasajes de Lorem Ipsum, y más recientemente con software de autoedición, como por ejemplo Aldus PageMaker, el cual incluye versiones de Lorem Ipsum.",new BigDecimal(50),2L,1L),
-                new RegistroProductoDTO("Torta Sonic","Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrevivió 500 años, sino que tambien ingresó como texto de relleno en documentos electrónicos, quedando esencialmente igual al original. Fue popularizado en los 60s con la creación de las hojas , las cuales contenian pasajes de Lorem Ipsum, y más recientemente con software de autoedición, como por ejemplo Aldus PageMaker, el cual incluye versiones de Lorem Ipsum. ",new BigDecimal(50),2L,1L),
+                new RegistroProductoDTO("Torta Soni","Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrevivió 500 años, sino que tambien ingresó como texto de relleno en documentos electrónicos, quedando esencialmente igual al original. Fue popularizado en los 60s con la creación de las hojas , las cuales contenian pasajes de Lorem Ipsum, y más recientemente con software de autoedición, como por ejemplo Aldus PageMaker, el cual incluye versiones de Lorem Ipsum. ",new BigDecimal(50),2L,1L),
                 new RegistroProductoDTO("Torta de Guanábana","Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrevivió 500 años, sino que tambien ingresó como texto de relleno en documentos electrónicos, quedando esencialmente igual al original. Fue popularizado en los 60s con la creación de las hojas , las cuales contenian pasajes de Lorem Ipsum, y más recientemente con software de autoedición, como por ejemplo Aldus PageMaker, el cual incluye versiones de Lorem Ipsum.",new BigDecimal(50),2L,1L),
                 new RegistroProductoDTO("Coca Cola","Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrevivió 500 años, sino que tambien ingresó como texto de relleno en documentos electrónicos, quedando esencialmente igual al original. Fue popularizado en los 60s con la creación de las hojas , las cuales contenian pasajes de Lorem Ipsum, y más recientemente con software de autoedición, como por ejemplo Aldus PageMaker, el cual incluye versiones de Lorem Ipsum.",new BigDecimal(5),3L,1L),
                 new RegistroProductoDTO("Agua Mineral San Mateo","Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrevivió 500 años, sino que tambien ingresó como texto de relleno en documentos electrónicos, quedando esencialmente igual al original. Fue popularizado en los 60s con la creación de las hojas , las cuales contenian pasajes de Lorem Ipsum, y más recientemente con software de autoedición, como por ejemplo Aldus PageMaker, el cual incluye versiones de Lorem Ipsum.",new BigDecimal(4),3L,1L),
-                new RegistroProductoDTO("Agua Mineral San Mateo","Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrevivió 500 años, sino que tambien ingresó como texto de relleno en documentos electrónicos, quedando esencialmente igual al original. Fue popularizado en los 60s con la creación de las hojas , las cuales contenian pasajes de Lorem Ipsum, y más recientemente con software de autoedición, como por ejemplo Aldus PageMaker, el cual incluye versiones de Lorem Ipsum.",new BigDecimal(3),3L,1L),
+                new RegistroProductoDTO("Agua Mineral San Mate","Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrevivió 500 años, sino que tambien ingresó como texto de relleno en documentos electrónicos, quedando esencialmente igual al original. Fue popularizado en los 60s con la creación de las hojas , las cuales contenian pasajes de Lorem Ipsum, y más recientemente con software de autoedición, como por ejemplo Aldus PageMaker, el cual incluye versiones de Lorem Ipsum.",new BigDecimal(3),3L,1L),
                 new RegistroProductoDTO("Gaseosa Sprite","Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrevivió 500 años, sino que tambien ingresó como texto de relleno en documentos electrónicos, quedando esencialmente igual al original. Fue popularizado en los 60s con la creación de las hojas , las cuales contenian pasajes de Lorem Ipsum, y más recientemente con software de autoedición, como por ejemplo Aldus PageMaker, el cual incluye versiones de Lorem Ipsum.",new BigDecimal(4),3L,1L),
                 new RegistroProductoDTO("Bebida Rehidratante Gatorade Marandina","Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrevivió 500 años, sino que tambien ingresó como texto de relleno en documentos electrónicos, quedando esencialmente igual al original. Fue popularizado en los 60s con la creación de las hojas , las cuales contenian pasajes de Lorem Ipsum, y más recientemente con software de autoedición, como por ejemplo Aldus PageMaker, el cual incluye versiones de Lorem Ipsum.",new BigDecimal(5),3L,1L),
                 new RegistroProductoDTO("Gaseosa Pepsi Black","Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrevivió 500 años, sino que tambien ingresó como texto de relleno en documentos electrónicos, quedando esencialmente igual al original. Fue popularizado en los 60s con la creación de las hojas , las cuales contenian pasajes de Lorem Ipsum, y más recientemente con software de autoedición, como por ejemplo Aldus PageMaker, el cual incluye versiones de Lorem Ipsum.",new BigDecimal(3),3L,1L),
