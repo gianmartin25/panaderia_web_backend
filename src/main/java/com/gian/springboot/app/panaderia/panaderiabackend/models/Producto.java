@@ -34,6 +34,17 @@ public class Producto {
     @JoinColumn(name = "categoria_id")
     private Categoria categoria;
 
+    @Column(name = "max_stock", nullable = false)
+    private int maxStock = 5;
+
+    public int getMaxStock() {
+        return maxStock;
+    }
+
+    public void setMaxStock(int maxStock) {
+        this.maxStock = maxStock;
+    }
+
     @ColumnDefault("false")
     @Column(name = "eliminado")
     private Boolean eliminado;

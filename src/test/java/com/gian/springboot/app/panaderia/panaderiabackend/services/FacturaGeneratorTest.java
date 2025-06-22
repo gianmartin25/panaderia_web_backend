@@ -1,6 +1,5 @@
 package com.gian.springboot.app.panaderia.panaderiabackend.services;
 
-import com.gian.springboot.app.panaderia.panaderiabackend.interfaces.ComprobanteDePagoGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

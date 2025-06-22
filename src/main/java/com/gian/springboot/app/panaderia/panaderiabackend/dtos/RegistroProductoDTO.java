@@ -8,6 +8,7 @@ public class RegistroProductoDTO {
     private BigDecimal precio;
     private Long categoriaId;
     private Long proveedorId;
+    private int maxStock = 5;
 
     public RegistroProductoDTO(String nombre, String descripcion, BigDecimal precio, Long categoriaId, Long proveedorId) {
         this.nombre = nombre;
@@ -18,6 +19,14 @@ public class RegistroProductoDTO {
     }
 
     public RegistroProductoDTO() {
+    }
+
+    public int getMaxStock() {
+        return maxStock;
+    }
+
+    public void setMaxStock(int maxStock) {
+        this.maxStock = maxStock;
     }
 
     public Long getProveedorId() {
@@ -60,7 +69,6 @@ public class RegistroProductoDTO {
     public void setPrecio(BigDecimal precio) {
         this.precio = precio;
     }
-
 
 
 }

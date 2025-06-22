@@ -62,6 +62,7 @@ public class ProductoService {
             producto.setProveedor(proveedor);
             producto.setImageUrl(nombreImagen);
             producto.setCategoria(categoria);
+            producto.setMaxStock(registroProductoDTO.getMaxStock());
         }
         Producto productoGuardado = productoRepository.save(producto);
         ProductoDTO productoDTO = new ProductoDTO();
@@ -101,6 +102,8 @@ public class ProductoService {
             productoDTO.setProveedorId(producto.getProveedor().getId());
             productoDTO.setProveedorNombre(producto.getProveedor().getNombre());
             productoDTO.setTotalCantidad(producto.getTotalCantidad());
+            productoDTO.setMaxStock(producto.getMaxStock());
+
             return productoDTO;
         }).collect(Collectors.toList());
 
@@ -136,6 +139,7 @@ public class ProductoService {
             productoDTO.setProveedorId(producto.getProveedor().getId());
             productoDTO.setProveedorNombre(producto.getProveedor().getNombre());
             productoDTO.setTotalCantidad(producto.getTotalCantidad());
+            productoDTO.setMaxStock( producto.getMaxStock());
             return productoDTO;
         }).collect(Collectors.toList());
     }

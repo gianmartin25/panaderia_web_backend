@@ -14,6 +14,15 @@ public class ProductoDTO {
     private String categoriaNombre;
     private Long proveedorId;
     private String proveedorNombre;
+    private int maxStock;
+
+    public int getMaxStock() {
+        return maxStock;
+    }
+
+    public void setMaxStock(int maxStock) {
+        this.maxStock = maxStock;
+    }
 
     public String getNombre() {
         return nombre;

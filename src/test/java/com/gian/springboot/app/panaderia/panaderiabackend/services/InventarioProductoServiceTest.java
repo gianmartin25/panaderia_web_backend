@@ -4,16 +4,16 @@ import com.gian.springboot.app.panaderia.panaderiabackend.dtos.InventarioProduct
 import com.gian.springboot.app.panaderia.panaderiabackend.dtos.RegistroInventarioProductoDTO;
 import com.gian.springboot.app.panaderia.panaderiabackend.models.InventarioProducto;
 import com.gian.springboot.app.panaderia.panaderiabackend.models.Producto;
+import com.gian.springboot.app.panaderia.panaderiabackend.models.TipoMovimiento;
 import com.gian.springboot.app.panaderia.panaderiabackend.repositories.InventarioProductoRepository;
 import com.gian.springboot.app.panaderia.panaderiabackend.repositories.ProductoRepository;
+import com.gian.springboot.app.panaderia.panaderiabackend.repositories.TipoMovimientoRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,6 +27,9 @@ class InventarioProductoServiceTest {
     @Mock
     private ProductoRepository productoRepository;
 
+    @Mock
+    private TipoMovimientoRepository tipoMovimientoRepository;
+
     @InjectMocks
     private InventarioProductoService inventarioProductoService;
 
@@ -36,54 +39,72 @@ class InventarioProductoServiceTest {
     }
 
     @Test
-    void testAgregarInventario_Success() {
-        RegistroInventarioProductoDTO registroInventarioProductoDTO = new RegistroInventarioProductoDTO();
-        registroInventarioProductoDTO.setCantidad(10);
-        registroInventarioProductoDTO.setProductoId(1L);
+    void testRegistrarMovimientoInventario_SuccessIngreso() {
+        // Arrange
+        RegistroInventarioProductoDTO registroDTO = new RegistroInventarioProductoDTO();
+        registroDTO.setProductoId(1L);
+        registroDTO.setTipoMovimientoId(1L);
+        registroDTO.setCantidad(10);
 
         Producto producto = new Producto();
         producto.setId(1L);
         producto.setNombre("Pan");
+        producto.setTotalCantidad(50);
+
+        TipoMovimiento tipoMovimiento = new TipoMovimiento();
+        tipoMovimiento.setId(1L);
+        tipoMovimiento.setNombre("INGRESO");
 
         InventarioProducto inventarioProducto = new InventarioProducto();
         inventarioProducto.setId(1L);
-        inventarioProducto.setCantidad(10);
         inventarioProducto.setProducto(producto);
+        inventarioProducto.setCantidad(10);
+        inventarioProducto.setTipoMovimiento(tipoMovimiento);
 
         when(productoRepository.findById(1L)).thenReturn(Optional.of(producto));
+        when(tipoMovimientoRepository.findById(1L)).thenReturn(Optional.of(tipoMovimiento));
         when(inventarioProductoRepository.save(any(InventarioProducto.class))).thenReturn(inventarioProducto);
-        when(productoRepository.save(any(Producto.class))).thenReturn(producto);
 
-        InventarioProductoDTO result = inventarioProductoService.registrarMovimientoInventario(registroInventarioProductoDTO);
+        // Act
+        InventarioProductoDTO result = inventarioProductoService.registrarMovimientoInventario(registroDTO);
 
+        // Assert
         assertNotNull(result);
         assertEquals(1L, result.getId());
         assertEquals(10, result.getCantidad());
         assertEquals("Pan", result.getProductoName());
+        assertEquals("INGRESO", result.getTipoMovimientoNombre());
+        verify(productoRepository, times(1)).findById(1L);
+        verify(tipoMovimientoRepository, times(1)).findById(1L);
         verify(inventarioProductoRepository, times(1)).save(any(InventarioProducto.class));
-        verify(productoRepository, times(1)).save(any(Producto.class));
     }
 
     @Test
-    void testListarInventario_Success() {
+    void testRegistrarMovimientoInventario_FailureStockInsuficiente() {
+        RegistroInventarioProductoDTO registroDTO = new RegistroInventarioProductoDTO();
+        registroDTO.setProductoId(1L);
+        registroDTO.setTipoMovimientoId(2L);
+        registroDTO.setCantidad(60);
+
         Producto producto = new Producto();
         producto.setId(1L);
         producto.setNombre("Pan");
+        producto.setTotalCantidad(50);
 
-        InventarioProducto inventarioProducto = new InventarioProducto();
-        inventarioProducto.setId(1L);
-        inventarioProducto.setCantidad(10);
-        inventarioProducto.setProducto(producto);
+        TipoMovimiento tipoMovimiento = new TipoMovimiento();
+        tipoMovimiento.setId(2L);
+        tipoMovimiento.setNombre("SALIDA");
 
-        when(inventarioProductoRepository.findAll()).thenReturn(Collections.singletonList(inventarioProducto));
+        when(productoRepository.findById(1L)).thenReturn(Optional.of(producto));
+        when(tipoMovimientoRepository.findById(2L)).thenReturn(Optional.of(tipoMovimiento));
 
-        List<InventarioProductoDTO> result = inventarioProductoService.listarInventario();
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            inventarioProductoService.registrarMovimientoInventario(registroDTO);
+        });
 
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        assertEquals(1L, result.get(0).getId());
-        assertEquals(10, result.get(0).getCantidad());
-        assertEquals("Pan", result.get(0).getProductoName());
-        verify(inventarioProductoRepository, times(1)).findAll();
+        assertEquals("Stock insuficiente para realizar la salida", exception.getMessage());
+        verify(productoRepository, times(1)).findById(1L);
+        verify(tipoMovimientoRepository, times(1)).findById(2L);
+        verify(inventarioProductoRepository, never()).save(any(InventarioProducto.class));
     }
 }

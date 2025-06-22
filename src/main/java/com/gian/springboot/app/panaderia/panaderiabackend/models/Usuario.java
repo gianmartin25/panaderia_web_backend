@@ -3,6 +3,7 @@ package com.gian.springboot.app.panaderia.panaderiabackend.models;
 import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -90,5 +91,27 @@ public class Usuario {
 
     public void setCliente(List<Cliente> cliente) {
         this.cliente = cliente;
+    }
+
+    @Column(name = "failed_attempts", nullable = false)
+    private int failedAttempts = 0;
+
+    @Column(name = "lockout_time")
+    private LocalDateTime lockoutTime;
+
+    public int getFailedAttempts() {
+        return failedAttempts;
+    }
+
+    public void setFailedAttempts(int failedAttempts) {
+        this.failedAttempts = failedAttempts;
+    }
+
+    public LocalDateTime getLockoutTime() {
+        return lockoutTime;
+    }
+
+    public void setLockoutTime(LocalDateTime lockoutTime) {
+        this.lockoutTime = lockoutTime;
     }
 }

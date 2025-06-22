@@ -10,6 +10,8 @@ import com.gian.springboot.app.panaderia.panaderiabackend.repositories.Direccion
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public  class DireccionEntregaService {
 
@@ -30,28 +32,36 @@ public  class DireccionEntregaService {
 //        return direccionEntrega.orElse(null);
 //    }
 
-    public DireccionEntregaDTO crearDireccionEntrega(RegistroDireccionDTO direccionEntregaDto) {
-        Cliente cliente = clienteRepository.findById(direccionEntregaDto.getClienteId()).orElse(null);
+    public DireccionEntregaDTO crearDireccionEntrega(RegistroDireccionDTO registroDireccionDTO) {
+        Optional<Cliente> clienteOptional = clienteRepository.findById(registroDireccionDTO.getClienteId());
+        if (clienteOptional.isEmpty()) {
+            throw new IllegalArgumentException("Cliente not found");
+        }
+
+        if (registroDireccionDTO.getCodigoPostal() == null) {
+            throw new IllegalArgumentException("Codigo Postal cannot be null");
+        }
 
         DireccionEntrega direccionEntrega = new DireccionEntrega();
-        direccionEntrega.setNombreReceptor(direccionEntregaDto.getNombre());
-        direccionEntrega.setDireccion(direccionEntregaDto.getDireccion());
-        direccionEntrega.setCiudad(direccionEntregaDto.getCiudad());
-        direccionEntrega.setNumeroDni(direccionEntregaDto.getNumeroDni());
-        direccionEntrega.setCodigoPostal(Long.parseLong(direccionEntregaDto.getCodigoPostal()));
-        direccionEntrega.setCliente(cliente);
+        direccionEntrega.setNombreReceptor(registroDireccionDTO.getNombre());
+        direccionEntrega.setDireccion(registroDireccionDTO.getDireccion());
+        direccionEntrega.setCiudad(registroDireccionDTO.getCiudad());
+        direccionEntrega.setNumeroDni(registroDireccionDTO.getNumeroDni());
+        direccionEntrega.setCodigoPostal(Long.parseLong(registroDireccionDTO.getCodigoPostal()));
+        direccionEntrega.setCliente(clienteOptional.get());
 
-        DireccionEntrega direccionEntregaGuardada = direccionEntregaRepository.save(direccionEntrega);
+        DireccionEntrega savedDireccion = direccionEntregaRepository.save(direccionEntrega);
+
         DireccionEntregaDTO direccionEntregaDTO = new DireccionEntregaDTO();
-        direccionEntregaDTO.setId(direccionEntregaGuardada.getId());
-        direccionEntregaDTO.setNombre(direccionEntregaGuardada.getNombreReceptor());
-        direccionEntregaDTO.setDireccion(direccionEntregaGuardada.getDireccion());
-        direccionEntregaDTO.setCiudad(direccionEntregaGuardada.getCiudad());
-        direccionEntregaDTO.setCodigoPostal(String.valueOf(direccionEntregaGuardada.getCodigoPostal()));
-        direccionEntregaDTO.setClienteId(direccionEntregaGuardada.getCliente().getId());
+        direccionEntregaDTO.setId(savedDireccion.getId());
+        direccionEntregaDTO.setNombre(savedDireccion.getNombreReceptor());
+        direccionEntregaDTO.setDireccion(savedDireccion.getDireccion());
+        direccionEntregaDTO.setCiudad(savedDireccion.getCiudad());
+        direccionEntregaDTO.setCodigoPostal(String.valueOf(savedDireccion.getCodigoPostal()));
+        direccionEntregaDTO.setClienteId(savedDireccion.getCliente().getId());
+
         return direccionEntregaDTO;
     }
-//
 //    @Override
 //    public DireccionEntrega actualizarDireccionEntrega(Long id, DireccionEntrega detallesDireccionEntrega) {
 //        Optional<DireccionEntrega> direccionEntregaOptional = direccionEntregaRepository.findById(id);

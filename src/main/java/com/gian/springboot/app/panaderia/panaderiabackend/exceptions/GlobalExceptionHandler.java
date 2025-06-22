@@ -6,6 +6,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
+
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -15,5 +19,26 @@ public class GlobalExceptionHandler {
     }
 
 
-    // Puedes agregar más métodos para manejar otras excepciones personalizadas
+    @ExceptionHandler(AuthException.class)
+    public ResponseEntity<Map<String, Object>> handleAuthException(AuthException ex) {
+        Map<String, Object> errorResponse = new HashMap<>();
+        errorResponse.put("timestamp", LocalDateTime.now());
+        errorResponse.put("status", ex.getStatusCode());
+        errorResponse.put("error", "Authentication Error");
+        errorResponse.put("message", ex.getMessage());
+
+        return ResponseEntity.status(ex.getStatusCode()).body(errorResponse);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Map<String, Object>> handleGenericException(Exception ex) {
+        Map<String, Object> errorResponse = new HashMap<>();
+        errorResponse.put("timestamp", LocalDateTime.now());
+        errorResponse.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
+        errorResponse.put("error", "Internal Server Error");
+        errorResponse.put("message", ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+    }
 }
+// Puedes agregar más métodos para manejar otras excepciones personalizadas
