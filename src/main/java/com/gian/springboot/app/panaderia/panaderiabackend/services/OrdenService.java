@@ -15,6 +15,9 @@ import java.util.Optional;
 public class OrdenService {
 
     @Autowired
+    private EstadoOrdenRepository estadoOrdenRepository;
+
+    @Autowired
     private OrdenRepository ordenRepository;
 
     @Autowired
@@ -28,6 +31,7 @@ public class OrdenService {
 
     @Autowired
     TransportistaRepository transportistaRepository;
+
     @Autowired
     private ClienteRepository clienteRepository;
 
@@ -38,12 +42,12 @@ public class OrdenService {
         for (Orden orden : ordenes) {
             OrdenResponseDto ordenResponseDto = new OrdenResponseDto();
             ordenResponseDto.setId(orden.getId());
-            ordenResponseDto.setEstado(orden.getEstado());
+            ordenResponseDto.setEstadoId(orden.getEstado().getId().toString());
+            ordenResponseDto.setEstado(orden.getEstado().getNombre());
             ordenResponseDto.setFechaCreacion(orden.getFecha().toString());
             ordenResponseDto.setTotal(orden.getTotal().toString());
             ordenResponseDto.setPagado(orden.getPagado());
             ordenResponseDto.setCliente(orden.getCliente().getNombres());
-
 
             List<ProductoOrdenResponseDTO> productos = new ArrayList<>();
             for (DetalleOrden detalle : orden.getDetalles()) {
@@ -68,7 +72,8 @@ public class OrdenService {
         for (Orden orden : ordenes) {
             OrdenResponseDto ordenResponseDto = new OrdenResponseDto();
             ordenResponseDto.setId(orden.getId());
-            ordenResponseDto.setEstado(orden.getEstado());
+            ordenResponseDto.setEstadoId(orden.getEstado().getId().toString());
+            ordenResponseDto.setEstado(orden.getEstado().getNombre());
             ordenResponseDto.setFechaCreacion(orden.getFecha().toString());
             ordenResponseDto.setTotal(orden.getTotal().toString());
             ordenResponseDto.setPagado(orden.getPagado());
@@ -96,6 +101,9 @@ public class OrdenService {
 
     public OrdenResponseDto crearOrden(RegistroOrdenDto registroOrdenDto) {
         Orden orden = new Orden();
+        EstadoOrden estadoOrden = estadoOrdenRepository.findById(1L)
+                .orElseThrow(() -> new RuntimeException("Estado de orden no encontrado"));
+        orden.setEstado(estadoOrden);
 
         for (ProductoCartRequestDTO detalleOrden : registroOrdenDto.getProductos()) {
             Optional<Producto> productoOptional = productoRepository.findById(detalleOrden.getIdProducto());
@@ -133,7 +141,7 @@ public class OrdenService {
 
         OrdenResponseDto ordenResponseDto = new OrdenResponseDto();
         ordenResponseDto.setId(orden.getId());
-        ordenResponseDto.setEstado(orden.getEstado());
+        ordenResponseDto.setEstado(orden.getEstado().getNombre());
         ordenResponseDto.setFechaCreacion(orden.getFecha().toString());
         ordenResponseDto.setTotal(orden.getTotal().toString());
 
@@ -150,6 +158,21 @@ public class OrdenService {
         ordenResponseDto.setProductos(productos);
         return ordenResponseDto;
     }
+
+    public boolean actualizarEstadoOrden(Long id, Long estadoId) {
+        Optional<Orden> ordenOptional = ordenRepository.findById(id);
+        if (ordenOptional.isPresent()) {
+            Orden orden = ordenOptional.get();
+            Optional<EstadoOrden> estadoOrdenOptional = estadoOrdenRepository.findById(estadoId);
+            if (estadoOrdenOptional.isPresent()) {
+                orden.setEstado(estadoOrdenOptional.get());
+                ordenRepository.save(orden);
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     public Orden actualizarOrden(Long id, Orden detallesOrden) {
         Optional<Orden> ordenOptional = ordenRepository.findById(id);
@@ -170,6 +193,4 @@ public class OrdenService {
             return false;
         }
     }
-
-
 }

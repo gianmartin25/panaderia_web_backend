@@ -35,11 +35,17 @@ public class Orden {
     @JoinColumn(name = "direccion_entrega_id")
     private DireccionEntrega direccionEntrega;
 
-    @ColumnDefault("'pendiente'")
-    @Column(name = "estado", length = Integer.MAX_VALUE)
-    @Check(constraints = "estado IN ('en almacén', 'en camino','cancelado','entregado')")
-    private String estado = "en almacén";
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "estado_id", nullable = false)
+    private EstadoOrden estado;
 
+    public EstadoOrden getEstado() {
+        return estado;
+    }
+
+    public void setEstado(EstadoOrden estado) {
+        this.estado = estado;
+    }
 
 
     @Column
@@ -49,7 +55,7 @@ public class Orden {
     @JoinColumn(name = "empleado_id")
     private Empleado empleado;
 
-    public Orden(){
+    public Orden() {
         this.detalles = new ArrayList<>();
     }
 
@@ -73,7 +79,7 @@ public class Orden {
         this.detalles = detalles;
     }
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "orden_id")
     private List<DetalleOrden> detalles;
 
@@ -109,14 +115,6 @@ public class Orden {
         this.total = total;
     }
 
-    public String getEstado() {
-        return estado;
-    }
-
-    public void setEstado(String estado) {
-        this.estado = estado;
-    }
-
     public Empleado getEmpleado() {
         return empleado;
     }
@@ -124,7 +122,6 @@ public class Orden {
     public void setEmpleado(Empleado empleado) {
         this.empleado = empleado;
     }
-
 
 
     public Transportista getTransportista() {

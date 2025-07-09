@@ -72,3 +72,9 @@ INSERT INTO tipos_comprobante (nombre) VALUES ('Boleta');
 
 INSERT  INTO tipos_movimiento (nombre) VALUES ('INGRESO');
 INSERT  INTO tipos_movimiento (nombre) VALUES ('SALIDA');
+
+INSERT INTO estado_orden (nombre) VALUES ('Pendiente');
+INSERT INTO estado_orden (nombre) VALUES ('En Almacen');
+INSERT INTO estado_orden (nombre) VALUES ('En Camino');
+INSERT INTO estado_orden (nombre) VALUES ('Entregado');
+INSERT INTO estado_orden (nombre) VALUES ('Anulado');

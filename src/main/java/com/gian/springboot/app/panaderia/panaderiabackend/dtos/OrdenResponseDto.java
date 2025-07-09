@@ -4,13 +4,16 @@ import java.util.List;
 
 public class OrdenResponseDto {
     private Long id;
+
+
+    private String estadoId;
     private String estado;
     private String fechaCreacion;
     private String fechaEntrega;
     private String direccionEntrega;
     private String cliente;
     private List<ProductoOrdenResponseDTO> productos;
-
+    
     public boolean isPagado() {
         return pagado;
     }
@@ -18,6 +21,15 @@ public class OrdenResponseDto {
     public void setPagado(boolean pagado) {
         this.pagado = pagado;
     }
+
+    public String getEstadoId() {
+        return estadoId;
+    }
+
+    public void setEstadoId(String estadoId) {
+        this.estadoId = estadoId;
+    }
+
 
     private boolean pagado;
 

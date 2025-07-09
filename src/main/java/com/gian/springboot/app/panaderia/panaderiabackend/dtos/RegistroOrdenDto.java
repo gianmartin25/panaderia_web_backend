@@ -1,10 +1,15 @@
 package com.gian.springboot.app.panaderia.panaderiabackend.dtos;
 
+import java.util.List;
+
 public class RegistroOrdenDto {
+
+
     private Long idDireccionEntrega;
     private Long clienteId;
-    private ProductoCartRequestDTO[] productos;
+    private List<ProductoCartRequestDTO> productos;
 
+    // Getters and setters
 
     public Long getIdDireccionEntrega() {
         return idDireccionEntrega;
@@ -22,11 +27,11 @@ public class RegistroOrdenDto {
         this.clienteId = clienteId;
     }
 
-    public ProductoCartRequestDTO[] getProductos() {
+    public List<ProductoCartRequestDTO> getProductos() {
         return productos;
     }
 
-    public void setProductos(ProductoCartRequestDTO[] productos) {
+    public void setProductos(List<ProductoCartRequestDTO> productos) {
         this.productos = productos;
     }
 }
